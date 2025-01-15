@@ -1,0 +1,140 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "karbon-asr"
+dynamic = ["version"]
+description = 'ASR transcription'
+readme = "README.md"
+requires-python = ">=3.9, <3.11"  # Numba not yet support 3.11
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Nguyen Quang Binh", email = "quangbinh.nguyentrong@gmail.com" },
+]
+classifiers = [
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+#  "Programming Language :: Python :: 3.11", # Numba not yet support 3.11.
+]
+dependencies = [
+  "numpy",
+  "datasets>=2.18.0",
+  "evaluate>=0.4.3",
+  "jiwer>=3.0.5",
+  "sacrebleu>=2.5.1",
+  "tensorboard>=2.15.2"
+
+]
+
+[project.optional-dependencies]
+
+faster-whisper = [
+  "faster-whisper==1.0.2",
+]
+
+transfomers = [
+  "transformers>=4.48.0",
+  "tokenizers>=0.15.2",
+  "torch>=2.2.2",
+]
+
+all = [
+  "karbon-asr[faster-whisper]",
+  "karbon-asr[transfomers]",
+]
+
+develop = [
+  "karbon-asr[all]",
+  "datasets>=2.18.0",
+  "evaluate",
+  "sacrebleu",
+  "librosa",
+  "soundfile",
+  "torchaudio>=2.2.2",
+  "tabulate",
+  "soxr==0.4.0b1",
+]
+
+tests = [
+  "karbon-asr[develop]",
+]
+
+[project.urls]
+Documentation = "https://git.teko.vn/data-science/karbon-asr/-/blob/main/README.md"
+Issues = "https://git.teko.vn/data-science/karbon-asr/-/issues"
+Source = "https://git.teko.vn/data-science/karbon-asr"
+
+[tool.hatch.version]
+path = "src/karbon_asr/__about__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "coverage[toml]>=6.5",
+  "pytest>=8.2.2",
+  "karbon-asr[tests]",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = [
+  "- coverage combine",
+  "coverage report",
+  "coverage xml",
+]
+
+cov = [
+  "test-cov",
+  "cov-report",
+]
+cov-html = [
+  "cov",
+  "coverage html",
+]
+
+[[tool.hatch.envs.all.matrix]]
+python = [
+  "3.9",
+  "3.10",
+  # "3.11", # Numba not yet support 3.11
+]
+
+[tool.hatch.envs.types]
+dependencies = [
+  "mypy>=1.0.0",
+]
+
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/karbon_asr tests}"
+
+[tool.coverage.run]
+source_pkgs = ["karbon_asr", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/karbon_asr/__about__.py",
+]
+
+[tool.coverage.paths]
+karbon_asr = ["src/karbon_asr", "*/karbon-asr/src/karbon_asr"]
+tests = ["tests", "*/karbon-asr/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py37', 'py38', 'py39', 'py310']
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+line-length = 120

@@ -1,0 +1,76 @@
+variables:
+  vram: "16gb"
+  task: "translate"
+  ver: "v1"
+  data_ver: "v3.mix"
+  language: "vi"
+  task_short_name: "s2tt"
+  
+  train_split_name: "train"
+  eval_split_name: "validation"
+  text_column_name: "transcipt"
+
+
+ModelArguments:
+  model_name_or_path: "openai/whisper-medium"
+  # tokenizer_name: None
+  # feature_extractor_name: None
+
+  use_auth_token: True
+  freeze_feature_encoder: False
+
+  model_index_name: "Whisper Medium Pako2vi"
+  apply_spec_augment: True
+
+
+DataTrainingArguments:
+  dataset_name: "trungpqteko/pako2vi-test"
+  audio_column_name: "audio"
+  text_column_name: "transcript"
+  max_duration_in_seconds: 30
+  min_duration_in_seconds: 1
+  train_split_name: "train"
+  eval_split_name: "validation"
+  language: "vi"
+  task: "translate"
+
+
+Seq2SeqTrainingArguments:
+  output_dir: "./output/model"
+  overwrite_output_dir: True
+  do_train: True
+  do_eval: True
+  eval_strategy: "epoch"
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 2
+  
+  learning_rate: 0.00001
+  num_train_epochs: 10
+  max_steps: 7000
+  
+  lr_scheduler_type: "constant_with_warmup"
+  warmup_steps: 50
+  
+  logging_strategy: "epoch"
+  save_strategy: "epoch"
+  eval_strategy: "epoch"
+  save_total_limit: 1
+  fp16: True
+  load_best_model_at_end: True
+  metric_for_best_model: "chrf++"
+  greater_is_better: "True"
+  optim: "adafactor"
+
+  gradient_checkpointing: True
+
+  report_to: "tensorboard"
+  push_to_hub: True
+  hub_private_repo: True
+
+  hub_model_id: "trungpqteko/whisper-medium-s2tt-pk2vi-v1-11gb"
+
+  disable_tqdm: False
+
+  predict_with_generate: True
+  generation_max_length: 255
