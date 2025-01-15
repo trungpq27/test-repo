@@ -46,11 +46,11 @@ Seq2SeqTrainingArguments:
   gradient_accumulation_steps: 2
   
   learning_rate: 0.00001
-  num_train_epochs: 10
+  # num_train_epochs: 10
   max_steps: 2000
   
   lr_scheduler_type: "constant_with_warmup"
-  warmup_steps: 50
+  warmup_steps: 10
   
   logging_strategy: "epoch"
   save_strategy: "epoch"
